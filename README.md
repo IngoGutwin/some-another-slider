@@ -1,4 +1,4 @@
-# CopyPublishModular Slider
+# Some Another Slider
 
 ## A modern, lightweight, and fully customizable slider component built with TypeScript. Supports multiple content types (products, galleries) with touch gestures and smooth animations.
 
