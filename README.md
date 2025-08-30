@@ -30,6 +30,7 @@ Understand how touch and click events are processed:
 
 ## Project Structure
 
+```
 src/
 ├── core/
 │ ├── SliderCore.ts # Main orchestrator
@@ -47,3 +48,4 @@ src/
 │ ├── DOMManager.ts # DOM utilities
 │ └── EventEmitter.ts # Event system
 └── index.ts # Public API
+```
