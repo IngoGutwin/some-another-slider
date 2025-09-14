@@ -7,11 +7,19 @@
     "typescript",
     "javascript"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "author": "Ingo Gutwin",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "npm run clean-dist & tsc --watch",
