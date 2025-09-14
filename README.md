@@ -1,51 +1,127 @@
-# Some Another Slider
+# Slider
 
-## A modern, lightweight, and fully customizable slider component built with TypeScript. Supports multiple content types (products, galleries) with touch gestures and smooth animations.
+## A flexible and lightweight **Vanilla TypeScript slider module** with **no external dependencies**.\ It supports **click navigation**, **touch events**, and **drag & drop** for modern slider implementations.
 
-## Features
+---
 
-- Zero Dependencies - Pure TypeScript/JavaScript
-- Touch & Mouse Support - Swipe gestures and button navigation
-- Multiple Themes - Product slider, gallery, custom renderers
-- High Performance - Optimized animations with requestAnimationFrame
-- Accessible - Keyboard navigation and screen reader support
-- TypeScript Ready - Full type definitions included
-- Highly Configurable - Extensive configuration options
+## 📂 Project Structure
 
-## Architecture
+    src/
+     ├── core/
+     │   ├── EventEmitterFactory.ts   # Generic event system
+     │   ├── SliderCore.ts            # Core slider logic
+     │   ├── SliderFactory.ts         # Entry point for creating a slider
+     │   ├── SliderStateManager.ts    # State management & DOM references
+     │
+     ├── types/
+     │   └── index.ts                 # Shared type definitions
+     │
+     └── index.ts                     # Export of SliderFactory
 
-This slider is built with a modular architecture using proven design patterns:
+---
 
-Factory Pattern for creating different slider types
-Strategy Pattern for customizable slide renderers
-Observer Pattern for event-driven communication
-State Pattern for managing slider states
+## ⚙️ Installation
 
-See the complete **[system architecture and component relationships](docs/architecture.md)**
-
-## Event Flow
-
-Understand how touch and click events are processed:
-**[Event Flow Sequences](docs/sequenceDiagram.md)**
-
-## Project Structure
-
+```bash
+npm install
 ```
-src/
-├── core/
-│ ├── SliderCore.ts # Main orchestrator
-│ └── StateManager.ts # State management
-├── handlers/
-│ ├── InputManager.ts # Event coordination
-│ ├── TouchHandler.ts # Touch gestures
-│ └── ClickHandler.ts # Button clicks
-├── renderers/
-│ ├── SlideRenderer.ts # Base renderer
-│ ├── ProductRenderer.ts # Product slides
-│ └── GalleryRenderer.ts # Gallery slides
-├── utils/
-│ ├── AnimationEngine.ts # Smooth animations
-│ ├── DOMManager.ts # DOM utilities
-│ └── EventEmitter.ts # Event system
-└── index.ts # Public API
+
+or
+
+```bash
+yarn install
 ```
+
+---
+
+## 🚀 Usage
+
+Create the HTML structure:
+
+```html
+<div id="container-id">
+  <button id="previous-btn">Previous</button>
+  <button id="next-btn">Next</button>
+  <ul>
+    <li><a href="#">Slide 1</a></li>
+    <li><a href="#">Slide 2</a></li>
+    <li><a href="#">Slide 3</a></li>
+  </ul>
+</div>
+```
+
+TypeScript/JavaScript:
+
+```ts
+import { SliderFactory } from "./src";
+
+SliderFactory({
+  containerId: "container-id",
+  btnPreviousSlideId: "previous-btn",
+  btnNextSlideId: "next-btn",
+  translateDuration: 300,
+});
+```
+
+---
+
+## 🔧 Configuration
+
+`SliderFactory` accepts a **config object**:
+
+---
+
+Key Type Default Description
+
+---
+
+`containerId` string `"container-id"` ID of the slider container
+
+`btnPreviousSlideId` string `"previous-btn"` ID of the button for previous
+slide
+
+`btnNextSlideId` string `"next-btn"` ID of the button for next slide
+
+`translateDuration` number `300` Animation duration in
+milliseconds
+
+---
+
+---
+
+## 📡 Events
+
+The event system is based on a generic **Emitter**
+(`EventEmitterFactory`).\
+Available events:
+
+- `click:btn-next-slide`
+- `click:btn-prev-slide`
+- `mousedown:slider-list`
+- `touchstart:slider-list`
+- `touchmove:slider-list`
+- `touchend:slider-list`
+
+Example:
+
+```ts
+const slider = SliderFactory(config);
+
+slider.on("click:btn-next-slide", () => {
+  console.log("Next button clicked");
+});
+```
+
+---
+
+## 🛠 Development
+
+- **Linting:** `npm run lint`
+- **Build:** `npm run build`
+- **Format:** `npm run format`
+
+---
+
+## 📜 License
+
+MIT License -- free to use, modify and distribute.
