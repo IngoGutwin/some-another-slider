@@ -36,10 +36,7 @@ export function SliderCore(
 
   function onDragEnd(e: Event): void {
     e.preventDefault();
-    let deltaX: number | null = sliderData.dragDeltaX;
-    if (!deltaX) {
-      return;
-    }
+    let deltaX: number = sliderData.dragDeltaX;
     if (deltaX > 0) {
       goToPrevSlide();
     } else {
@@ -49,18 +46,13 @@ export function SliderCore(
     document.removeEventListener("mouseup", onDragEnd);
   }
 
-  function getClientXofEvent(e: Event): number {
-    let result = 0;
-    if (e instanceof MouseEvent) {
-      result = e.clientX;
-    } else if (e instanceof TouchEvent) {
-      result = e.touches[0].clientX;
-    }
-    return result;
-  }
-
   function onDragMove(e: Event): void {
-    let clientX = getClientXofEvent(e);
+    let clientX = 0;
+    if (e instanceof MouseEvent) {
+      clientX = e.clientX;
+    } else if (e instanceof TouchEvent) {
+      clientX = e.touches[0].clientX;
+    }
     stateManager.calculateDragDeltaX(clientX);
     stateManager.updateCurrentOffsetX();
     if (!sliderData.isDragging) {
@@ -70,12 +62,43 @@ export function SliderCore(
   }
 
   function onDragStart(e: Event): void {
-    e.preventDefault();
-    let clientX = getClientXofEvent(e);
+    let clientX = 0;
+    if (e instanceof MouseEvent) {
+      e.preventDefault();
+      clientX = e.clientX;
+    } else if (e instanceof TouchEvent) {
+      clientX = e.touches[0].clientX;
+    }
     stateManager.setDragStartX(clientX);
     document.addEventListener("mousemove", onDragMove);
     document.addEventListener("mouseup", onDragEnd);
   }
+
+  function addDOMListeners(): void {
+    if (slider) {
+      slider.btnNext.addEventListener("click", () => emitter.emit("click:btn-next-slide"));
+      slider.btnPrevious.addEventListener("click", () => emitter.emit("click:btn-prev-slide"));
+      slider.list.addEventListener("mousedown", (e) => emitter.emit("mousedown:slider-list", e));
+      slider.anchorElements.forEach((anchor: HTMLAnchorElement) => {
+        anchor.addEventListener("click", (e) => {
+          if (stateManager.sliderIsDragging()) {
+            e.preventDefault();
+            e.stopPropagation();
+            stateManager.updateDragging();
+          }
+        });
+      });
+      slider.list.addEventListener("touchstart", (e) => emitter.emit("touchstart:slider-list", e), {
+        passive: true,
+      });
+      slider.list.addEventListener("touchmove", (e) => emitter.emit("touchmove:slider-list", e), {
+        passive: true,
+      });
+      slider.list.addEventListener("touchend", (e) => emitter.emit("touchend:slider-list", e));
+    }
+  }
+
+  addDOMListeners();
 
   emitter.on("click:btn-next-slide", goToNextSlide);
   emitter.on("click:btn-prev-slide", goToPrevSlide);

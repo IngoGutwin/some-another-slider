@@ -36,6 +36,7 @@ export function SliderStateManager({
   let config: SliderConfig = { translateDuration, containerId };
   let data: SliderStateData = {
     prevOffsetX: calculatePrevOffsetX(0, slideWidth(slides)),
+    oldOffsetX: 0,
     currentOffsetX: 0,
     nextOffsetX: calculateNextOffsetX(0, slideWidth(slides)),
     dragStartX: 0,
@@ -67,32 +68,48 @@ export function SliderStateManager({
     return true;
   };
 
-  function calculateNextSlide(): void {
-    if (data.dragDeltaX !== 0 && Math.abs(data.dragDeltaX) < data.slideWidth / 3) {
-      data.currentOffsetX = data.nextOffsetX + data.slideWidth;
-      return;
+  function isDragged(): boolean {
+    let absDragDeltaX: number = Math.abs(data.dragDeltaX);
+    if (absDragDeltaX > 0 && absDragDeltaX > data.slideWidth / 3) {
+      console.log(absDragDeltaX, data.slideWidth / 3);
+      return true;
     }
+    return false;
+  }
+
+  function updateSliderOffsetX(): void {
+    data.nextOffsetX = calculateNextOffsetX(data.currentOffsetX, data.slideWidth);
+    data.prevOffsetX = calculatePrevOffsetX(data.currentOffsetX, data.slideWidth);
+    data.oldOffsetX = data.currentOffsetX;
+  }
+
+  function calculateDraggedSlides(): number {
+    let result: number = 1;
+    if (isDragged()) {
+      result = Math.round(Math.abs(data.dragDeltaX / data.slideWidth));
+      return result;
+    }
+    return result;
+  }
+
+  function calculateNextSlide(): void {
     if (!isNextSlide()) {
       data.currentOffsetX = data.maxOffSet;
       return;
     }
-    data.currentOffsetX = data.nextOffsetX;
-    data.nextOffsetX = calculateNextOffsetX(data.currentOffsetX, data.slideWidth);
-    data.prevOffsetX = calculatePrevOffsetX(data.currentOffsetX, data.slideWidth);
+    let slidesDragged: number = calculateDraggedSlides();
+    data.currentOffsetX = -(slidesDragged * data.slideWidth) + data.oldOffsetX;
+    updateSliderOffsetX();
   }
 
   function calculatePreviousSlide(): void {
-    if (data.dragDeltaX !== 0 && Math.abs(data.dragDeltaX) < data.slideWidth / 3) {
-      data.currentOffsetX = data.nextOffsetX + data.slideWidth;
-      return;
-    }
     if (!isPrevSlide()) {
       data.currentOffsetX = data.prevOffsetX + data.nextOffsetX;
       return;
     }
-    data.currentOffsetX = data.prevOffsetX;
-    data.nextOffsetX = calculateNextOffsetX(data.currentOffsetX, data.slideWidth);
-    data.prevOffsetX = calculatePrevOffsetX(data.currentOffsetX, data.slideWidth);
+    let slidesDragged: number = calculateDraggedSlides();
+    data.currentOffsetX = slidesDragged * data.slideWidth + data.oldOffsetX;
+    updateSliderOffsetX();
   }
 
   function updateCurrentOffsetX(): void {

@@ -7,6 +7,7 @@ export interface SliderConfig {
 
 export interface SliderStateData {
   prevOffsetX: number;
+  oldOffsetX: number;
   currentOffsetX: number;
   nextOffsetX: number;
   dragStartX: number;
